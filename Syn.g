@@ -29,11 +29,22 @@ compoundstatement :
 statement :
     WRITE^ OPENPAREN! ( expression | string ) CLOSEPAREN!
   | WRITELN
+  | READ^ OPENPAREN! (variable) CLOSEPAREN!
+  | IF OPENPARENT! ( expression relation expression )
+    compoundstatement
   ;
 
 expression:
-    constant
+    UNARYOP? term ( ( PLUS | MINUS ) term)*
   ;
+
+term:
+  factor ( (MUL | DIV) factor)?
+
+factor:
+  variable
+  | constant
+  | OPENPAREN^ (expression) CLOSEPAREN!
 
 constant:
     REALNUM 
@@ -43,4 +54,9 @@ string
     scope { String tmp;}
     :
     s=STRING { $string::tmp = cleanString($s.text); }-> STRING[$string::tmp]
+  ;
+
+
+variable
+  IDENTIFIER
   ;
