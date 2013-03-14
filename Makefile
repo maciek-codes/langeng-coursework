@@ -8,6 +8,7 @@ all:
 	cat testsk.ass
 	assmule testsk.ass
 
+
 clean:
 	rm -f *.class
 	rm -f *.txt
@@ -15,3 +16,4 @@ clean:
 	rm -f *.ass
 	rm -f Lex.java
 	rm -f Syn.java
+	rm -f treeOutput.png

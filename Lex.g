@@ -14,7 +14,7 @@ READ       : 'read' ;
 REPEAT     : 'repeat' ;
 UNTIL      : 'until' ;
 
-IDENTIFIER  : CHARACTER ( ALPHANUM);
+IDENTIFIER  : CHARACTER (ALPHANUM)*;
 
 
 //---------------------------------------------------------------------------
@@ -41,16 +41,13 @@ INT          : ('0'..'9')+ ;
 fragment
 EXPONENT     : 'e' ('-')? INT;
 
-
 REALNUM      : INT '.' INT (EXPONENT)?;
-
-UNARYOP      : ( PLUS | MINUS )?;
 
 fragment
 CHARACTER   : ('a'..'z'|'A'..'Z');
 
 fragment
-ALPHANUM    : (CHARACTER | INT )*;
+ALPHANUM    : (CHARACTER | INT);
 
 STRING       : '\'' ('\'' '\'' | ~'\'')* '\'';
 

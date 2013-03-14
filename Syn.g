@@ -23,7 +23,7 @@ variable :
   ;
 
 program :
-    compoundstatement
+  compoundstatement
   ;
 
 compoundstatement :
@@ -36,11 +36,11 @@ relation :
 
 statement :
     WRITE^ OPENPAREN! ( expression | string ) CLOSEPAREN!
-  | WRITELN
-  | READ^ OPENPAREN! variable CLOSEPAREN!
-  | IF OPENPARENT! expression relation expression CLOSEPAREN!
-  | compoundstatement
-  | variable ASSIGN! expression
+  | WRITELN^
+  | READ^ OPENPAREN! (variable) CLOSEPAREN!
+  | IF^ expression relation expression compoundstatement (ELSE! compoundstatement)?
+  | REPEAT^ compoundstatement UNTIL! expression relation expression
+  | variable ASSIGN^ expression
   ;
 
 factor :
@@ -54,7 +54,7 @@ term :
   ;
 
 expression :
-    UNARYOP term ((PLUS|MINUS) term)*
+    (PLUS|MINUS)? term ((PLUS|MINUS) term)*
   ;
 
 constant :
