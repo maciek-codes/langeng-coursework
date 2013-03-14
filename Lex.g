@@ -1,5 +1,4 @@
 // COMS22303: Lexical analyser
-
 lexer grammar Lex;
 
 //---------------------------------------------------------------------------
@@ -15,36 +14,46 @@ READ       : 'read' ;
 REPEAT     : 'repeat' ;
 UNTIL      : 'until' ;
 
+IDENTIFIER  : CHARACTER ( ALPHANUM);
+
+
 //---------------------------------------------------------------------------
 // OPERATORS
 //---------------------------------------------------------------------------
+SEMICOLON    : ';' ;
+OPENPAREN    : '(' ;
+CLOSEPAREN   : ')' ;
 MORETHAN     : '>' ;
 LESSTHAN     : '<' ;
 MOREOREQ     : '>=' ;
 LESSOREQ     : '<=' ;
 NOTEQUAL     : '!=' ;
 EQUAL        : '=' ;
-SEMICOLON    : ';' ;
-OPENPAREN    : '(' ;
-CLOSEPAREN   : ')' ;
 MUL          : '*' ;
-DIV          : '\' ;
+DIV          : '/' ;
+PLUS         : '+' ;
+MINUS        : '-' ;
+ASSIGN       : ':=' ;
 
-IDENTIFIER  : ( 'a'..'z' | 'A'..'Z' | INT )
+fragment
+INT          : ('0'..'9')+ ;
+
+fragment
+EXPONENT     : 'e' ('-')? INT;
+
 
 REALNUM      : INT '.' INT (EXPONENT)?;
 
-UNARYOP      : ( '+' | '-')
+UNARYOP      : ( PLUS | MINUS )?;
 
-fragment 
-EXPONENT     : 'e' ('-')? INT ;
+fragment
+CHARACTER   : ('a'..'z'|'A'..'Z');
 
-fragment 
-INT          : ('0'..'9')+ ;
+fragment
+ALPHANUM    : (CHARACTER | INT )*;
 
 STRING       : '\'' ('\'' '\'' | ~'\'')* '\'';
 
 COMMENT      : '{' (~'}')* '}' {skip();} ;
 
-WS           : (' ' | '\t' | '\r' | '\n' )+ {skip();} ;
-
+WS           : (' ' | '\t' | '\r' | '\n' )+ {skip();};

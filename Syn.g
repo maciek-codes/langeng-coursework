@@ -9,14 +9,18 @@ options {
 
 @members
 {
-	private String cleanString(String s){
-		String tmp;
-		tmp = s.replaceAll("^'", "");
-		s = tmp.replaceAll("'$", "");
-		tmp = s.replaceAll("''", "'");
-		return tmp;
-	}
+  private String cleanString(String s){
+    String tmp;
+    tmp = s.replaceAll("^'", "");
+    s = tmp.replaceAll("'$", "");
+    tmp = s.replaceAll("''", "'");
+    return tmp;
+  }
 }
+
+variable :
+  IDENTIFIER
+  ;
 
 program :
     compoundstatement
@@ -26,27 +30,34 @@ compoundstatement :
     BEGIN^ ( statement SEMICOLON! )* END!
   ;
 
+relation :
+  (MORETHAN | LESSTHAN | MOREOREQ | LESSOREQ | NOTEQUAL | EQUAL)
+  ;
+
 statement :
     WRITE^ OPENPAREN! ( expression | string ) CLOSEPAREN!
   | WRITELN
-  | READ^ OPENPAREN! (variable) CLOSEPAREN!
-  | IF OPENPARENT! ( expression relation expression )
-    compoundstatement
+  | READ^ OPENPAREN! variable CLOSEPAREN!
+  | IF OPENPARENT! expression relation expression CLOSEPAREN!
+  | compoundstatement
+  | variable ASSIGN! expression
   ;
 
-expression:
-    UNARYOP? term ( ( PLUS | MINUS ) term)*
-  ;
-
-term:
-  factor ( (MUL | DIV) factor)?
-
-factor:
+factor :
   variable
   | constant
   | OPENPAREN^ (expression) CLOSEPAREN!
+  ;
 
-constant:
+term :
+  factor ( (MUL | DIV) factor)*
+  ;
+
+expression :
+    UNARYOP term ((PLUS|MINUS) term)*
+  ;
+
+constant :
     REALNUM 
   ;
 
@@ -57,6 +68,3 @@ string
   ;
 
 
-variable
-  IDENTIFIER
-  ;

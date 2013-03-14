@@ -27,20 +27,41 @@ public class Irt
 //
 // CAMLE TOKENS BEGIN
   public static final String[] tokenNames = new String[] {
-"NONE", "NONE", "NONE", "NONE", "BEGIN", "END", "WRITE", "WRITELN", "SEMICOLON", "OPENPAREN", "CLOSEPAREN", "INT", "EXPONENT", "REALNUM", "STRING", "COMMENT", "WS"};
-  public static final int CLOSEPAREN=10;
-  public static final int EXPONENT=12;
-  public static final int WS=16;
-  public static final int WRITELN=7;
-  public static final int BEGIN=4;
-  public static final int REALNUM=13;
-  public static final int SEMICOLON=8;
-  public static final int INT=11;
-  public static final int OPENPAREN=9;
-  public static final int END=5;
-  public static final int COMMENT=15;
+"NONE", "NONE", "NONE", "NONE", "BEGIN", "END", "WRITE", "WRITELN", "IF", "ELSE", "READ", "REPEAT", "UNTIL", "CHARACTER", "ALPHANUM", "IDENTIFIER", "SEMICOLON", "OPENPAREN", "CLOSEPAREN", "MORETHAN", "LESSTHAN", "MOREOREQ", "LESSOREQ", "NOTEQUAL", "EQUAL", "MUL", "DIV", "PLUS", "MINUS", "ASSIGN", "INT", "EXPONENT", "REALNUM", "UNARYOP", "STRING", "COMMENT", "WS", "OPENPARENT"};
+  public static final int UNARYOP=33;
+  public static final int CLOSEPAREN=18;
+  public static final int LESSTHAN=20;
+  public static final int EXPONENT=31;
+  public static final int OPENPARENT=37;
+  public static final int MORETHAN=19;
+  public static final int ELSE=9;
+  public static final int INT=30;
+  public static final int SEMICOLON=16;
+  public static final int MINUS=28;
+  public static final int MUL=25;
   public static final int WRITE=6;
-  public static final int STRING=14;
+  public static final int CHARACTER=13;
+  public static final int ALPHANUM=14;
+  public static final int IF=8;
+  public static final int NOTEQUAL=23;
+  public static final int WS=36;
+  public static final int WRITELN=7;
+  public static final int READ=10;
+  public static final int UNTIL=12;
+  public static final int IDENTIFIER=15;
+  public static final int BEGIN=4;
+  public static final int EQUAL=24;
+  public static final int REALNUM=32;
+  public static final int ASSIGN=29;
+  public static final int PLUS=27;
+  public static final int REPEAT=11;
+  public static final int LESSOREQ=22;
+  public static final int OPENPAREN=17;
+  public static final int MOREOREQ=21;
+  public static final int DIV=26;
+  public static final int END=5;
+  public static final int COMMENT=35;
+  public static final int STRING=34;
 // CAMLE TOKENS END
 
   public static IRTree convert(CommonTree ast)
