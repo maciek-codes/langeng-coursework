@@ -3,6 +3,7 @@ import java.lang.reflect.Array;
 import antlr.collections.AST;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
+import org.antlr.stringtemplate.StringTemplate;
 
 class camle {
   public static void main(String[] args)
@@ -52,6 +53,20 @@ class camle {
       if (opt.equals("-syn")) {
         System.out.println(parserTree.toStringTree());
         System.exit(0);
+      }
+      if (opt.equals("-tree")) {
+    	  DOTTreeGenerator gen = new DOTTreeGenerator();
+    	  StringTemplate st = gen.toDOT(parserTree);
+    	  try {
+	    	  FileWriter treeFile = new FileWriter("tree.dot");
+	    	  PrintWriter out = new PrintWriter(treeFile);
+	    	  out.println(st);
+	    	  out.close();
+	    	  System.out.println("Tree written to file.");
+    	  } catch (Exception e) {
+    		  System.out.println("Tree generation failed.");
+    	  }
+    	  System.exit(0);
       }
       CommonTreeNodeStream ast = new CommonTreeNodeStream(parserTree);
       IRTree newIrt = Irt.convert(parserTree);

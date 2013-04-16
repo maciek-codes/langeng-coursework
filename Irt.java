@@ -3,7 +3,7 @@
 // This program converts an Abstract Syntax Tree produced by ANTLR to an IR tree.
 // The Abstract Syntax Tree has type CommonTree and can be walked using 5 simple
 // methods.  If ast is a CommonTree and t is a Token:
-//   
+//
 //   int        ast.getChildCount();                       // Get # of subtrees
 //   CommonTree (CommonTree)ast.getChild(int childNumber); // Get a subtree
 //   Token      ast.getToken();                            // Get a node's token
@@ -22,17 +22,15 @@ import org.antlr.runtime.tree.*;
 
 public class Irt
 {
-// The code below is generated automatically from the ".tokens" file of the 
+// The code below is generated automatically from the ".tokens" file of the
 // ANTLR syntax analysis, using the TokenConv program.
 //
 // CAMLE TOKENS BEGIN
   public static final String[] tokenNames = new String[] {
-"NONE", "NONE", "NONE", "NONE", "BEGIN", "END", "WRITE", "WRITELN", "IF", "ELSE", "READ", "REPEAT", "UNTIL", "CHARACTER", "ALPHANUM", "IDENTIFIER", "SEMICOLON", "OPENPAREN", "CLOSEPAREN", "MORETHAN", "LESSTHAN", "MOREOREQ", "LESSOREQ", "NOTEQUAL", "EQUAL", "MUL", "DIV", "PLUS", "MINUS", "ASSIGN", "INT", "EXPONENT", "REALNUM", "UNARYOP", "STRING", "COMMENT", "WS", "OPENPARENT"};
-  public static final int UNARYOP=33;
+"NONE", "NONE", "NONE", "NONE", "BEGIN", "END", "WRITE", "WRITELN", "IF", "ELSE", "READ", "REPEAT", "UNTIL", "CHARACTER", "ALPHANUM", "IDENTIFIER", "SEMICOLON", "OPENPAREN", "CLOSEPAREN", "MORETHAN", "LESSTHAN", "MOREOREQ", "LESSOREQ", "NOTEQUAL", "EQUAL", "MUL", "DIV", "PLUS", "MINUS", "ASSIGN", "INT", "EXPONENT", "REALNUM", "STRING", "COMMENT", "WS"};
   public static final int CLOSEPAREN=18;
   public static final int LESSTHAN=20;
   public static final int EXPONENT=31;
-  public static final int OPENPARENT=37;
   public static final int MORETHAN=19;
   public static final int ELSE=9;
   public static final int INT=30;
@@ -44,7 +42,7 @@ public class Irt
   public static final int ALPHANUM=14;
   public static final int IF=8;
   public static final int NOTEQUAL=23;
-  public static final int WS=36;
+  public static final int WS=35;
   public static final int WRITELN=7;
   public static final int READ=10;
   public static final int UNTIL=12;
@@ -60,8 +58,8 @@ public class Irt
   public static final int MOREOREQ=21;
   public static final int DIV=26;
   public static final int END=5;
-  public static final int COMMENT=35;
-  public static final int STRING=34;
+  public static final int COMMENT=34;
+  public static final int STRING=33;
 // CAMLE TOKENS END
 
   public static IRTree convert(CommonTree ast)
@@ -129,7 +127,7 @@ public class Irt
     else if (tt == WRITE) {
       ast1 = (CommonTree)ast.getChild(0);
       String type = arg(ast1, irt1);
-      if (type.equals("real")) {
+      if (type.equals("real") || type.equals("identifier")) {
         irt.setOp("WRR");
         irt.addSub(irt1);
       }
@@ -137,6 +135,9 @@ public class Irt
         irt.setOp("WRS");
         irt.addSub(irt1);
       }
+    }
+    else if (tt == ASSIGN) {
+      assignment(ast, irt);
     }
     else {
       error(tt);
@@ -150,11 +151,19 @@ public class Irt
     int tt = t.getType();
     if (tt == STRING) {
       String tx = t.getText();
-      int a = Memory.allocateString(tx); 
+      int a = Memory.allocateString(tx);
       String st = String.valueOf(a);
       irt.setOp("MEM");
       irt.addSub(new IRTree("CONST", new IRTree(st)));
       return "string";
+    }
+    else if(tt == IDENTIFIER) {
+      String identifier = t.getText();
+      int a = Memory.getVariable(identifier);
+      String st = String.valueOf(a);
+      irt.setOp("MEM");
+      irt.addSub(new IRTree("CONST", new IRTree(st)));
+      return "identifier";
     }
     else {
       expression(ast, irt);
@@ -188,6 +197,20 @@ public class Irt
     else {
       error(tt);
     }
+  }
+
+  // Convert an assignment AST to IR tree
+  public static void assignment(CommonTree ast, IRTree irt)
+  {
+    irt.setOp("MOVE");
+    CommonTree astLeft = (CommonTree)ast.getChild(0);
+    CommonTree astRight = (CommonTree)ast.getChild(1);
+    IRTree irtLeft = new IRTree();
+    IRTree irtRight = new IRTree();
+    String typeLeft = arg(astLeft, irtLeft);
+    String typeRight = arg(astRight, irtRight);
+    irt.addSub(irtLeft);
+    irt.addSub(irtRight);
   }
 
   private static void error(int tt)

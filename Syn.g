@@ -38,27 +38,31 @@ statement :
     WRITE^ OPENPAREN! ( expression | string ) CLOSEPAREN!
   | WRITELN^
   | READ^ OPENPAREN! (variable) CLOSEPAREN!
-  | IF^ expression relation expression compoundstatement (ELSE! compoundstatement)?
-  | REPEAT^ compoundstatement UNTIL! expression relation expression
+  | IF^ exp compoundstatement (ELSE! compoundstatement)?
+  | REPEAT^ compoundstatement UNTIL! exp
   | variable ASSIGN^ expression
+  ;
+
+exp:
+  expression relation^ expression
   ;
 
 factor :
   variable
   | constant
-  | OPENPAREN^ (expression) CLOSEPAREN!
+  | OPENPAREN! (expression) CLOSEPAREN!
   ;
 
 term :
-  factor ( (MUL | DIV) factor)*
+  factor ( (MUL^ | DIV^) factor)*
   ;
 
 expression :
-    (PLUS|MINUS)? term ((PLUS|MINUS) term)*
+    (PLUS^ | MINUS^ )? term ((PLUS^ | MINUS^) term)*
   ;
 
 constant :
-    REALNUM 
+    REALNUM
   ;
 
 string

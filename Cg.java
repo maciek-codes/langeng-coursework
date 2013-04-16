@@ -25,7 +25,7 @@ public class Cg
       statement(irt.getSub(0), o);
       statement(irt.getSub(1), o);
     }
-    else if (irt.getOp().equals("WRS") && irt.getSub(0).getOp().equals("MEM") && 
+    else if (irt.getOp().equals("WRS") && irt.getSub(0).getOp().equals("MEM") &&
              irt.getSub(0).getSub(0).getOp().equals("CONST")) {
       String a = irt.getSub(0).getSub(0).getSub(0).getOp();
       emit(o, "WRS "+a);
@@ -33,6 +33,16 @@ public class Cg
     else if (irt.getOp().equals("WRR")) {
       String e = expression(irt.getSub(0), o);
       emit(o, "WRR "+e);
+      Reg.releaseLast();
+    }
+    // Assignment
+    else if (irt.getOp().equals("MOVE")) {
+      // Handle first variable's memory location
+      String location = irt.getSub(0).getSub(0).getSub(0).getOp();
+      // If we assign constant
+      String e = expression(irt.getSub(1), o);
+      emit(o, "STORE " + e + "," + "R0," + location);
+      Reg.releaseLast();
     }
     else {
       error(irt.getOp());
@@ -47,6 +57,11 @@ public class Cg
       String t = irt.getSub(0).getOp();
       result = Reg.newReg();
       emit(o, "MOVIR "+result+","+t);
+    }
+    else if(irt.getOp().equals("MEM") && irt.getSub(0).getOp().equals("CONST")) {
+      String offset = irt.getSub(0).getSub(0).getOp();
+      result = Reg.newReg();
+      emit(o, "LOAD " + result + "," + "R0," + offset);
     }
     else {
       error(irt.getOp());

@@ -1,7 +1,9 @@
-import java.util.ArrayList;
 import java.io.*;
+import java.util.*;
 
 public class Memory {
+
+  static HashMap<String, Integer> variables = new HashMap<String, Integer>();
 
   static ArrayList<Byte> memory = new ArrayList<Byte>();
 
@@ -13,6 +15,30 @@ public class Memory {
       memory.add(new Byte("", text.charAt(i)));
     }
     memory.add(new Byte("", 0));
+    return addr;
+  }
+
+  static public int getVariable(String variable)
+  {
+    // If variable was there
+    if(variables.containsKey(variable)) {
+      return variables.get(variable);
+    }
+
+    // Make sure address starts as a multiple of 4
+    while(memory.size() % 4 != 0) {
+      memory.add(new Byte("", 0));
+    }
+
+    // Address
+    int addr = memory.size();
+
+    // Allocate 4-bytes for a real
+    for (int i=0; i < 4; i++) {
+      memory.add(new Byte(variable, 0));
+    }
+
+    variables.put(variable, addr);
     return addr;
   }
 
