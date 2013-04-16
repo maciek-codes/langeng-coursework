@@ -44,6 +44,14 @@ public class Cg
       emit(o, "STORE " + e + "," + "R0," + location);
       Reg.releaseLast();
     }
+    else if (irt.getOp().equals("READ")) {
+      // READ ( MEM ( CONST ...))
+      String location = irt.getSub(0).getSub(0).getSub(0).getOp();
+      String register = Reg.newReg();
+      emit(o, "RDR " + register);
+      emit(o, "STORE " + register + "," + "R0," + location);
+      Reg.releaseLast();
+    }
     else {
       error(irt.getOp());
     }

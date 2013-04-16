@@ -139,6 +139,9 @@ public class Irt
     else if (tt == ASSIGN) {
       assignment(ast, irt);
     }
+    else if (tt == READ) {
+      read(ast, irt);
+    }
     else {
       error(tt);
     }
@@ -211,6 +214,16 @@ public class Irt
     String typeRight = arg(astRight, irtRight);
     irt.addSub(irtLeft);
     irt.addSub(irtRight);
+  }
+
+  // Convert a read statement AST to IR tree
+  public static void read(CommonTree ast, IRTree irt)
+  {
+    irt.setOp("READ");
+    CommonTree argument = (CommonTree)ast.getChild(0);
+    IRTree irtSub = new IRTree();
+    String type = arg(argument, irtSub);
+    irt.addSub(irtSub);
   }
 
   private static void error(int tt)
