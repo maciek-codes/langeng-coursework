@@ -142,6 +142,9 @@ public class Irt
     else if (tt == READ) {
       read(ast, irt);
     }
+    else if(tt == MUL || tt == DIV || tt == PLUS || tt == MINUS) {
+      expression(ast, irt);
+    }
     else {
       error(tt);
     }
@@ -183,9 +186,22 @@ public class Irt
     int tt = t.getType();
     if (tt == REALNUM) {
       constant(ast, irt1);
-      irt.setOp("CONST");
-      irt.addSub(irt1);
     }
+    else if((tt == PLUS || tt == MINUS || tt == DIV || tt == MUL) &&
+      ast.getChildCount() > 1) {
+
+      arithmetic(ast, irt);
+      return;
+    } else if(tt == PLUS && ast.getChildCount() == 1) {
+      ast1 = (CommonTree)ast.getChild(0);
+      constant(ast1, irt1);
+    } else if(tt == MINUS && ast.getChildCount() == 1) {
+      ast1 = (CommonTree)ast.getChild(0);
+      constant(ast1, irt1);
+      irt1.setOp("-" + irt1.getOp());
+    }
+    irt.setOp("CONST");
+    irt.addSub(irt1);
   }
 
   // Convert a constant AST to IR tree
@@ -224,6 +240,30 @@ public class Irt
     IRTree irtSub = new IRTree();
     String type = arg(argument, irtSub);
     irt.addSub(irtSub);
+  }
+
+  public static void arithmetic(CommonTree ast, IRTree irt)
+  {
+    irt.setOp("BINARYOP");
+    IRTree irt0 = new IRTree();
+    IRTree irt1 = new IRTree();
+    IRTree irt2 = new IRTree();
+
+    if(ast.getType() == PLUS) {
+      irt0.setOp("PLUS");
+    } else if(ast.getType() == MINUS) {
+      irt0.setOp("MINUS");
+    } else if(ast.getType() == MUL) {
+      irt0.setOp("MUL");
+    } else if(ast.getType() == DIV) {
+      irt0.setOp("DIV");
+    }
+
+    arg((CommonTree)ast.getChild(0), irt1);
+    arg((CommonTree)ast.getChild(1), irt2);
+    irt.addSub(irt0);
+    irt.addSub(irt1);
+    irt.addSub(irt2);
   }
 
   private static void error(int tt)

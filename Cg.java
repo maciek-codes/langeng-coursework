@@ -52,6 +52,10 @@ public class Cg
       emit(o, "STORE " + register + "," + "R0," + location);
       Reg.releaseLast();
     }
+    else if (irt.getOp().equals("BINARYOP"))
+    {
+      expression(irt, o);
+    }
     else {
       error(irt.getOp());
     }
@@ -70,6 +74,50 @@ public class Cg
       String offset = irt.getSub(0).getSub(0).getOp();
       result = Reg.newReg();
       emit(o, "LOAD " + result + "," + "R0," + offset);
+    }
+    else if (irt.getOp().equals("BINARYOP")) {
+
+      if(irt.getSub(0).getOp() == "PLUS") {
+        result = Reg.newReg();
+        String left = expression(irt.getSub(1), o);
+        if(irt.getSub(2).getOp() == "CONST") {
+          String imm = irt.getSub(2).getSub(0).getOp();
+          emit(o, "ADDI " + result + "," + left + "," + imm);
+        } else {
+          String right = expression(irt.getSub(1), o);
+          emit(o, "ADDR " + result + "," + left + "," + right);
+        }
+      } else if(irt.getSub(0).getOp() == "MINUS") {
+        result = Reg.newReg();
+        String left = expression(irt.getSub(1), o);
+        if(irt.getSub(2).getOp() == "CONST") {
+          String imm = irt.getSub(2).getSub(0).getOp();
+          emit(o, "SUBI " + result + "," + left + "," + imm);
+        } else {
+          String right = expression(irt.getSub(1), o);
+          emit(o, "SUBR " + result + "," + left + "," + right);
+        }
+      } else if(irt.getSub(0).getOp() == "DIV") {
+        result = Reg.newReg();
+        String left = expression(irt.getSub(1), o);
+        if(irt.getSub(2).getOp() == "CONST") {
+          String imm = irt.getSub(2).getSub(0).getOp();
+          emit(o, "DIVI " + result + "," + left + "," + imm);
+        } else {
+          String right = expression(irt.getSub(1), o);
+          emit(o, "DIVR " + result + "," + left + "," + right);
+        }
+      } else if(irt.getSub(0).getOp() == "MUL") {
+        result = Reg.newReg();
+        String left = expression(irt.getSub(1), o);
+        if(irt.getSub(2).getOp() == "CONST") {
+          String imm = irt.getSub(2).getSub(0).getOp();
+          emit(o, "ADDI " + result + "," + left + "," + imm);
+        } else {
+          String right = expression(irt.getSub(1), o);
+          emit(o, "ADDR " + result + "," + left + "," + right);
+        }
+      }
     }
     else {
       error(irt.getOp());
