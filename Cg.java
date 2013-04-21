@@ -76,46 +76,66 @@ public class Cg
       emit(o, "LOAD " + result + "," + "R0," + offset);
     }
     else if (irt.getOp().equals("BINARYOP")) {
+      
+      String operation = irt.getSub(0).getOp();
 
-      if(irt.getSub(0).getOp() == "PLUS") {
-        result = Reg.newReg();
-        String left = expression(irt.getSub(1), o);
+      if(operation == "PLUS") {
+        result = expression(irt.getSub(1), o);
         if(irt.getSub(2).getOp() == "CONST") {
           String imm = irt.getSub(2).getSub(0).getOp();
-          emit(o, "ADDI " + result + "," + left + "," + imm);
+
+          String temp = Reg.newReg();
+          emit(o, "MOVIR " + temp + "," + imm);
+          emit(o, "ADDR " + result + "," + result + "," + temp);
+          Reg.releaseLast();
+          
         } else {
-          String right = expression(irt.getSub(1), o);
-          emit(o, "ADDR " + result + "," + left + "," + right);
+          String right = expression(irt.getSub(2), o);
+          emit(o, "ADDR " + result + "," + result + "," + right);
+          Reg.releaseLast();
         }
-      } else if(irt.getSub(0).getOp() == "MINUS") {
-        result = Reg.newReg();
-        String left = expression(irt.getSub(1), o);
+      } else if(operation == "MINUS") {
+        result = expression(irt.getSub(1), o);
         if(irt.getSub(2).getOp() == "CONST") {
           String imm = irt.getSub(2).getSub(0).getOp();
-          emit(o, "SUBI " + result + "," + left + "," + imm);
+          
+          String temp = Reg.newReg();
+          emit(o, "MOVIR " + temp + "," + imm);
+          emit(o, "SUBR " + result + "," + result + "," + temp);
+          Reg.releaseLast();
+
         } else {
-          String right = expression(irt.getSub(1), o);
-          emit(o, "SUBR " + result + "," + left + "," + right);
+          String right = expression(irt.getSub(2), o);
+          emit(o, "SUBR " + result + "," + result + "," + right);
+          Reg.releaseLast();
         }
-      } else if(irt.getSub(0).getOp() == "DIV") {
-        result = Reg.newReg();
-        String left = expression(irt.getSub(1), o);
+      } else if(operation == "DIV") {
+        result = expression(irt.getSub(1), o);
         if(irt.getSub(2).getOp() == "CONST") {
           String imm = irt.getSub(2).getSub(0).getOp();
-          emit(o, "DIVI " + result + "," + left + "," + imm);
+          
+          String temp = Reg.newReg();
+          emit(o, "MOVIR " + temp + "," + imm);
+          emit(o, "DIVR " + result + "," + result + "," + temp);
+          Reg.releaseLast();
+        
         } else {
-          String right = expression(irt.getSub(1), o);
-          emit(o, "DIVR " + result + "," + left + "," + right);
+          String right = expression(irt.getSub(2), o);
+          emit(o, "DIVR " + result + "," + result + "," + right);
+          Reg.releaseLast();
         }
-      } else if(irt.getSub(0).getOp() == "MUL") {
-        result = Reg.newReg();
-        String left = expression(irt.getSub(1), o);
+      } else if(operation == "MUL") {
+        result = expression(irt.getSub(1), o);
         if(irt.getSub(2).getOp() == "CONST") {
           String imm = irt.getSub(2).getSub(0).getOp();
-          emit(o, "ADDI " + result + "," + left + "," + imm);
+          String temp = Reg.newReg();
+          emit(o, "MOVIR " + temp + "," + imm);
+          emit(o, "MULR " + result + "," + result + "," + temp);
+          Reg.releaseLast();
         } else {
-          String right = expression(irt.getSub(1), o);
-          emit(o, "ADDR " + result + "," + left + "," + right);
+          String right = expression(irt.getSub(2), o);
+          emit(o, "MULR " + result + "," + result + "," + right);
+          Reg.releaseLast();
         }
       }
     }
@@ -136,5 +156,26 @@ public class Cg
   {
     System.out.println("CG error: "+op);
     System.exit(1);
+  }
+
+  private static boolean isInteger(String str) {
+    
+    if(str == null || str.length() == 0)
+      return false;
+
+    if(str.matches("^(\\+|\\-)?\\d*(\\.0+)*"))
+      return true;
+
+    return false;
+  }
+
+  private static String getIntegerPart(String realInput) {
+
+    if(!isInteger(realInput))
+      return null;
+
+    String[] result = realInput.split("\\.");
+
+    return result[0];
   }
 }

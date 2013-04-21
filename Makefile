@@ -3,11 +3,17 @@ all:
 	antlr3 Syn.g
 	javac TokenConv.java
 	java TokenConv Syn.tokens Irt.java 
-	antlr3 *.java
-	antlr3 camle -cg testsk.le
+	javac *.java
+
+test:
+	antlr3 Lex.g
+	antlr3 Syn.g
+	javac TokenConv.java
+	java TokenConv Syn.tokens Irt.java 
+	javac *.java
+	java camle -cg testsk.le
 	cat testsk.ass
 	./assmule testsk.ass
-
 
 clean:
 	rm -f *.class
