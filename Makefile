@@ -6,7 +6,7 @@ all:
 	antlr3 *.java
 	antlr3 camle -cg testsk.le
 	cat testsk.ass
-	assmule testsk.ass
+	./assmule testsk.ass
 
 
 clean:
