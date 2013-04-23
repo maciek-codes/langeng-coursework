@@ -56,6 +56,9 @@ public class Cg
     {
       expression(irt, o);
     }
+    else if (irt.getOp().equals("NOOP")) {
+      // Skip..
+    }
     else {
       error(irt.getOp());
     }
@@ -78,6 +81,14 @@ public class Cg
     else if (irt.getOp().equals("BINARYOP")) {
       
       String operation = irt.getSub(0).getOp();
+
+      if(irt.getSub(1).getOp() == "CONST" &&
+        irt.getSub(2).getOp() != "CONST") {
+        
+        IRTree temp = irt.getSub(1);
+        irt.setSub(1, irt.getSub(2));
+        irt.setSub(2, temp);
+      }
 
       if(operation == "PLUS") {
         result = expression(irt.getSub(1), o);

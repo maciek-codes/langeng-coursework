@@ -83,6 +83,14 @@ class IRTree
     return sub.get(i);
   }
 
+  public IRTree setSub(int i, IRTree newSub)
+  {
+    if (i >= sub.size()) {
+      System.out.println("IRTree error accessing subtree "+i+" of "+op+" node");
+    }
+    return sub.set(i, newSub);
+  }
+
 // toString
 
   public String toString()

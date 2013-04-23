@@ -145,9 +145,144 @@ public class Irt
     else if(tt == MUL || tt == DIV || tt == PLUS || tt == MINUS) {
       expression(ast, irt);
     }
+    else if(tt == IF) {
+      conditional(ast, irt);
+    }
     else {
       error(tt);
     }
+  }
+
+  // Convert a conditional statement AST to IR tree
+  public static void conditional(CommonTree ast, IRTree irt) 
+  {
+    
+    if(ast.getChildCount() <= 2) {
+      // IF-THEN
+      String n = Label.newLabel();
+      String n1 = Label.newLabel();
+      irt.setOp("IFTHEN");
+      irt.addSub(translate((CommonTree)ast.getChild(0), n1, n));
+      irt.addSub(branch((CommonTree)ast.getChild(1), n1, n));
+
+    } else { 
+      // IF-THEN-ELSE
+      String n = Label.newLabel();
+      String n1 = Label.newLabel();
+      String n2 = Label.newLabel();
+      irt.setOp("IFTHENELSE");
+      irt.addSub(translate((CommonTree)ast.getChild(0), n1, n2));
+      
+      irt.addSub(branch((CommonTree)ast.getChild(1),
+        (CommonTree)ast.getChild(2),
+        n1, n2, n));
+    }
+  }
+
+  private static IRTree translate(CommonTree ast, String labelBranch, String labelEnd) {
+    IRTree seq = new IRTree("CJUMP");
+
+    seq.addSub(new IRTree(tokenToRelation(ast)));
+    IRTree irt1 = new IRTree();
+    IRTree irt2 = new IRTree();
+    arg((CommonTree)ast.getChild(0), irt1);
+    arg((CommonTree)ast.getChild(1), irt2);
+    seq.addSub(irt1);
+    seq.addSub(irt2);
+    seq.addSub(new IRTree(labelBranch));
+    seq.addSub(new IRTree(labelEnd));
+
+    return seq;
+  }
+
+  private static IRTree translate(CommonTree ast, String labelBranch1, String labelBranch2, String labelEnd) {
+    IRTree seq = new IRTree("CJUMP");
+
+    seq.addSub(new IRTree(tokenToRelation(ast)));
+    IRTree irt1 = new IRTree();
+    IRTree irt2 = new IRTree();
+    arg((CommonTree)ast.getChild(0), irt1);
+    arg((CommonTree)ast.getChild(1), irt2);
+    seq.addSub(irt1);
+    seq.addSub(irt2);
+    seq.addSub(new IRTree(labelBranch1));
+    seq.addSub(new IRTree(labelBranch2));
+    return seq;
+  }
+
+  private static String tokenToRelation(CommonTree ast) {
+    Token t = ast.getToken();
+    int tt = t.getType();
+    if (tt == MORETHAN) {
+      return "MT";
+    } else if (tt == LESSTHAN) {
+      return "LT";
+    } else if (tt == MOREOREQ) {
+      return "MEQ";
+    } else if (tt == LESSOREQ) {
+      return "LEQ";
+    } else {
+      return "NEQ";
+    }
+  }
+
+  private static IRTree branch(CommonTree ast, String labelBranch, String labelEnd) {
+    IRTree seq = new IRTree("SEQ");
+
+    seq.addSub(
+      new IRTree("LABEL", new IRTree(labelBranch)));
+
+    IRTree seq1 = new IRTree("SEQ");
+    
+    IRTree s1 = new IRTree();
+    statements(ast, s1);
+    
+    seq1.addSub(s1);
+    seq1.addSub(
+      new IRTree("LABEL", new IRTree(labelEnd)));
+
+    seq.addSub(seq1);
+    return seq;
+  }
+
+  private static IRTree branch(CommonTree ast1, CommonTree ast2, String labelBranch1, String labelBranch2, String labelEnd) {
+    IRTree seq = new IRTree("SEQ");
+
+    seq.addSub(
+      new IRTree("LABEL", new IRTree(labelBranch1)));
+
+    IRTree seq1 = new IRTree("SEQ");
+    
+    IRTree s1 = new IRTree();
+    statements(ast1, s1);
+    
+
+    seq1.addSub(s1);
+
+    IRTree seq2 = new IRTree("SEQ");
+
+    seq2.addSub(
+      new IRTree("JUMP", 
+        new IRTree("NAME",
+          new IRTree(labelEnd))));
+
+    IRTree seq3 = new IRTree("SEQ");
+
+    seq3.addSub(
+      new IRTree("LABEL", new IRTree(labelBranch2)));
+
+    IRTree seq4 = new IRTree("SEQ");
+    IRTree s2 = new IRTree();
+    statements(ast2, s2);
+    seq4.addSub(s2);
+    seq4.addSub(
+      new IRTree("LABEL", new IRTree(labelEnd)));
+
+    seq3.addSub(seq4);
+    seq2.addSub(seq3);
+    seq1.addSub(seq2);
+    seq.addSub(seq1);
+    return seq;
   }
 
   // Convert an arg AST to IR tree
