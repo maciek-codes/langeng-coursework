@@ -59,9 +59,13 @@ public class Cg
       emit(o, irt.getSub(0).getOp()+":");
     }
     else if (irt.getOp().equals("REPEAT")) {
-      IRTree seq = irt.getSub(0);
-      statement(seq.getSub(0), o);
-      ifthen(seq.getSub(1), o);
+      //IRTree seq = irt.getSub(0);
+      statement(irt.getSub(0), o);
+      //statement(seq.getSub(1), o);
+      //ifthen(seq.getSub(2), o);
+    }
+    else if (irt.getOp().equals("CJUMP")) {
+      ifthen(irt, o);
     }
     else if (irt.getOp().equals("IFTHEN") || irt.getOp().equals("IFTHENELSE")) {
       ifthen(irt, o);
@@ -125,7 +129,7 @@ public class Cg
     Reg.releaseLast();  // LHS register
     Reg.releaseLast();  // RHS register
     Reg.releaseLast();  // B..R register
-
+    
     statement(irt.getSub(1), o);
   }
 

@@ -1,3 +1,8 @@
 begin
-  repeat begin write(1.0); end until 1.0 <= 2.0;
+  repeat 
+  	begin 
+  		write(1.0); 
+  		write(2.0);
+  	end 
+  	until 1.0 <= 2.0;
 end

@@ -163,7 +163,6 @@ public class Irt
 
     String n = Label.newLabel();
     String n1 = Label.newLabel();
-    String n2 = Label.newLabel();
     irt.setOp("REPEAT");
 
     IRTree seq = new IRTree("SEQ");
@@ -173,27 +172,21 @@ public class Irt
 
     IRTree seq2 = new IRTree("SEQ");
     seq.addSub(seq2);
-    seq2.addSub(translate((CommonTree)ast.getChild(1), n2, n));
-
-    IRTree seq3 = new IRTree("SEQ");
-    seq2.addSub(seq3);
-
-    seq3.addSub(new IRTree("LABEL", new IRTree(n2)));
-
-    IRTree seq4 = new IRTree("SEQ");
-    seq3.addSub(seq4);
 
     IRTree s = new IRTree();
     statements((CommonTree)ast.getChild(0), s);
-    seq4.addSub(s);
+    seq2.addSub(s);
 
-    IRTree seq5 = new IRTree("SEQ");
-    seq4.addSub(seq5);
+    //IRTree seq3 = new IRTree("SEQ");
+    //seq2.addSub(seq3);  
 
-    seq5.addSub(new IRTree("JUMP", new IRTree("NAME", new IRTree(n1))));
-    seq5.addSub(new IRTree("LABEL", new IRTree(n)));
-    //irt.addSub(repeat((CommonTree)ast.getChild(0)));
+    IRTree ifthen = new IRTree("IFTHEN");
+    seq2.addSub(ifthen);
+    ifthen.addSub(translate((CommonTree)ast.getChild(1), n1, n));
     
+    //IRTree seq4 = new IRTree("SEQ");
+    //ifthen.addSub(seq4);
+    ifthen.addSub(new IRTree("LABEL", new IRTree(n)));
   }
 
   // Convert a conditional statement AST to IR tree
