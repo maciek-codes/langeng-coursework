@@ -147,10 +147,53 @@ public class Irt
     }
     else if(tt == IF) {
       conditional(ast, irt);
+    } else if(tt == REPEAT) {
+      repeat_loop(ast, irt);
     }
     else {
       error(tt);
     }
+  }
+
+  // Convert a repeat loop AST to IR tree
+  public static void repeat_loop(CommonTree ast, IRTree irt) 
+  {
+    if(ast.getChildCount() != 2)
+      return;
+
+    String n = Label.newLabel();
+    String n1 = Label.newLabel();
+    String n2 = Label.newLabel();
+    irt.setOp("REPEAT");
+
+    IRTree seq = new IRTree("SEQ");
+    irt.addSub(seq);
+
+    seq.addSub(new IRTree("LABEL", new IRTree(n1)));
+
+    IRTree seq2 = new IRTree("SEQ");
+    seq.addSub(seq2);
+    seq2.addSub(translate((CommonTree)ast.getChild(1), n2, n));
+
+    IRTree seq3 = new IRTree("SEQ");
+    seq2.addSub(seq3);
+
+    seq3.addSub(new IRTree("LABEL", new IRTree(n2)));
+
+    IRTree seq4 = new IRTree("SEQ");
+    seq3.addSub(seq4);
+
+    IRTree s = new IRTree();
+    statements((CommonTree)ast.getChild(0), s);
+    seq4.addSub(s);
+
+    IRTree seq5 = new IRTree("SEQ");
+    seq4.addSub(seq5);
+
+    seq5.addSub(new IRTree("JUMP", new IRTree("NAME", new IRTree(n1))));
+    seq5.addSub(new IRTree("LABEL", new IRTree(n)));
+    //irt.addSub(repeat((CommonTree)ast.getChild(0)));
+    
   }
 
   // Convert a conditional statement AST to IR tree

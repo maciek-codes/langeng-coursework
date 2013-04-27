@@ -58,6 +58,11 @@ public class Cg
     else if (irt.getOp().equals("LABEL")) {
       emit(o, irt.getSub(0).getOp()+":");
     }
+    else if (irt.getOp().equals("REPEAT")) {
+      IRTree seq = irt.getSub(0);
+      statement(seq.getSub(0), o);
+      ifthen(seq.getSub(1), o);
+    }
     else if (irt.getOp().equals("IFTHEN") || irt.getOp().equals("IFTHENELSE")) {
       ifthen(irt, o);
     } else if(irt.getOp().equals("JUMP")) {
