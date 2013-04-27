@@ -213,6 +213,7 @@ public class Irt
   private static String tokenToRelation(CommonTree ast) {
     Token t = ast.getToken();
     int tt = t.getType();
+    
     if (tt == MORETHAN) {
       return "MT";
     } else if (tt == LESSTHAN) {
@@ -221,9 +222,10 @@ public class Irt
       return "MEQ";
     } else if (tt == LESSOREQ) {
       return "LEQ";
-    } else {
+    } else if (tt == NOTEQUAL) {
       return "NEQ";
     }
+      return "EQ";
   }
 
   private static IRTree branch(CommonTree ast, String labelBranch, String labelEnd) {

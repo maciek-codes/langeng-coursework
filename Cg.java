@@ -58,8 +58,10 @@ public class Cg
     else if (irt.getOp().equals("LABEL")) {
       emit(o, irt.getSub(0).getOp()+":");
     }
-    else if (irt.getOp().equals("IFTHEN")) {
+    else if (irt.getOp().equals("IFTHEN") || irt.getOp().equals("IFTHENELSE")) {
       ifthen(irt, o);
+    } else if(irt.getOp().equals("JUMP")) {
+      emit(o, "JMP " + irt.getSub(0).getSub(0).getOp());
     }
     else if (irt.getOp().equals("NOOP")) {
       // Skip..
@@ -69,11 +71,57 @@ public class Cg
     }
   }
 
-  private static void ifthen(IRTee irt, PrintStream o)
+  private static void ifthen(IRTree irt, PrintStream o)
   {
     // Should be CJUMP
     IRTree cJumpirt = irt.getSub(0);
-    
+    String lhs = null, rhs = null;
+
+    lhs = expression(cJumpirt.getSub(1), o);
+    rhs = expression(cJumpirt.getSub(2), o);
+
+    if(cJumpirt.getSub(0).getOp().equals("MT")) {
+      String reg = Reg.newReg();
+      emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
+      emit(o, "BLTZR " + reg + "," + cJumpirt.getSub(4));
+      emit(o, "JMP " + cJumpirt.getSub(3));
+
+    } else if(cJumpirt.getSub(0).getOp().equals("LT")) {
+      String reg = Reg.newReg();
+      emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
+      emit(o, "BLTZR " + reg + "," + cJumpirt.getSub(3));
+      emit(o, "JMP " + cJumpirt.getSub(4));
+    } else if(cJumpirt.getSub(0).getOp().equals("MEQ")) {
+
+      String reg = Reg.newReg();
+      emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
+      emit(o, "BGEZR " + reg + "," + cJumpirt.getSub(3));
+      emit(o, "JMP " + cJumpirt.getSub(4));
+
+    } else if(cJumpirt.getSub(0).getOp().equals("LEQ")) {
+      String reg = Reg.newReg();
+      emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
+      emit(o, "BGEZR " + reg + "," + cJumpirt.getSub(4));
+      emit(o, "JMP " + cJumpirt.getSub(3));
+
+    } else if(cJumpirt.getSub(0).getOp().equals("EQ")) {
+      String reg = Reg.newReg();
+      emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
+      emit(o, "BEQZR " + reg + "," + cJumpirt.getSub(3));
+      emit(o, "JMP " + cJumpirt.getSub(4));
+
+    } else if(cJumpirt.getSub(0).getOp().equals("NEQ")) {
+      String reg = Reg.newReg();
+      emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
+      emit(o, "BNEZR " + reg + "," + cJumpirt.getSub(3));
+      emit(o, "JMP " + cJumpirt.getSub(4));
+    }
+
+    Reg.releaseLast();  // LHS register
+    Reg.releaseLast();  // RHS register
+    Reg.releaseLast();  // B..R register
+
+    statement(irt.getSub(1), o);
   }
 
   // Generate code from an expression (in IRTree form)
