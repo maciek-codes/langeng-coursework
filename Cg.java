@@ -52,9 +52,14 @@ public class Cg
       emit(o, "STORE " + register + "," + "R0," + location);
       Reg.releaseLast();
     }
-    else if (irt.getOp().equals("BINARYOP"))
-    {
+    else if (irt.getOp().equals("BINARYOP")) {
       expression(irt, o);
+    }
+    else if (irt.getOp().equals("LABEL")) {
+      emit(o, irt.getSub(0).getOp()+":");
+    }
+    else if (irt.getOp().equals("IFTHEN")) {
+      ifthen(irt, o);
     }
     else if (irt.getOp().equals("NOOP")) {
       // Skip..
@@ -62,6 +67,13 @@ public class Cg
     else {
       error(irt.getOp());
     }
+  }
+
+  private static void ifthen(IRTee irt, PrintStream o)
+  {
+    // Should be CJUMP
+    IRTree cJumpirt = irt.getSub(0);
+    
   }
 
   // Generate code from an expression (in IRTree form)
