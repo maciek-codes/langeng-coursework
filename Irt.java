@@ -182,7 +182,7 @@ public class Irt
 
     IRTree ifthen = new IRTree("IFTHEN");
     seq2.addSub(ifthen);
-    ifthen.addSub(translate((CommonTree)ast.getChild(1), n1, n));
+    ifthen.addSub(translate((CommonTree)ast.getChild(1), n, n1));
     
     //IRTree seq4 = new IRTree("SEQ");
     //ifthen.addSub(seq4);

@@ -2,7 +2,11 @@ begin
   repeat 
   	begin 
   		write(1.0); 
-  		write(2.0);
+  		writeln;
   	end 
-  	until 1.0 <= 2.0;
+  	until 12.0 <= 0.1;
+  	if 12.0 <= 0.1 begin
+  		write(9.0); 
+  		writeln;
+  	end;
 end
