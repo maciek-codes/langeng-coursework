@@ -93,37 +93,59 @@ public class Cg
       String reg = Reg.newReg();
       emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
       emit(o, "BLTZR " + reg + "," + cJumpirt.getSub(4));
-      emit(o, "JMP " + cJumpirt.getSub(3));
 
+      if(irt.getSub(1).getSub(0).getOp() != "LABEL" ||
+        irt.getSub(1).getSub(0).getSub(0).getOp() != cJumpirt.getSub(3).getOp()) {
+        emit(o, "JMP " + cJumpirt.getSub(3));  
+      }
+      
     } else if(cJumpirt.getSub(0).getOp().equals("LT")) {
       String reg = Reg.newReg();
       emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
       emit(o, "BLTZR " + reg + "," + cJumpirt.getSub(3));
-      emit(o, "JMP " + cJumpirt.getSub(4));
+      
+      if(irt.getSub(1).getSub(0).getOp() != "LABEL" ||
+        irt.getSub(1).getSub(0).getSub(0).getOp() != cJumpirt.getSub(4).getOp()) {
+        emit(o, "JMP " + cJumpirt.getSub(4));  
+      }
+
     } else if(cJumpirt.getSub(0).getOp().equals("MEQ")) {
 
       String reg = Reg.newReg();
       emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
       emit(o, "BGEZR " + reg + "," + cJumpirt.getSub(3));
-      emit(o, "JMP " + cJumpirt.getSub(4));
+      if(irt.getSub(1).getSub(0).getOp() != "LABEL" ||
+        irt.getSub(1).getSub(0).getSub(0).getOp() != cJumpirt.getSub(4).getOp()) {
+        emit(o, "JMP " + cJumpirt.getSub(4));  
+      }
 
     } else if(cJumpirt.getSub(0).getOp().equals("LEQ")) {
       String reg = Reg.newReg();
       emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
       emit(o, "BGEZR " + reg + "," + cJumpirt.getSub(4));
-      emit(o, "JMP " + cJumpirt.getSub(3));
+      if(irt.getSub(1).getSub(0).getOp() != "LABEL" ||
+        irt.getSub(1).getSub(0).getSub(0).getOp() != cJumpirt.getSub(3).getOp()) {
+        emit(o, "JMP " + cJumpirt.getSub(3));  
+      }
 
     } else if(cJumpirt.getSub(0).getOp().equals("EQ")) {
       String reg = Reg.newReg();
       emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
       emit(o, "BEQZR " + reg + "," + cJumpirt.getSub(3));
-      emit(o, "JMP " + cJumpirt.getSub(4));
+      
+      if(irt.getSub(1).getSub(0).getOp() != "LABEL" ||
+        irt.getSub(1).getSub(0).getSub(0).getOp() != cJumpirt.getSub(4).getOp()) {
+        emit(o, "JMP " + cJumpirt.getSub(4));  
+      }
 
     } else if(cJumpirt.getSub(0).getOp().equals("NEQ")) {
       String reg = Reg.newReg();
       emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
       emit(o, "BNEZR " + reg + "," + cJumpirt.getSub(3));
-      emit(o, "JMP " + cJumpirt.getSub(4));
+      if(irt.getSub(1).getSub(0).getOp() != "LABEL" ||
+        irt.getSub(1).getSub(0).getSub(0).getOp() != cJumpirt.getSub(4).getOp()) {
+        emit(o, "JMP " + cJumpirt.getSub(4));  
+      }
     }
 
     Reg.releaseLast();  // LHS register

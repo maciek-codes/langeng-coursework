@@ -19,6 +19,8 @@ import java.lang.reflect.Array;
 import antlr.collections.AST;
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
+import java.text.*;
+ 
 
 public class Irt
 {
@@ -434,9 +436,31 @@ public class Irt
 
     arg((CommonTree)ast.getChild(0), irt1);
     arg((CommonTree)ast.getChild(1), irt2);
-    irt.addSub(irt0);
-    irt.addSub(irt1);
-    irt.addSub(irt2);
+
+    if(irt1.getOp() == "CONST" && irt2.getOp() == "CONST") {
+        double lhs = Double.parseDouble(irt1.getSub(0).getOp());
+        double rhs = Double.parseDouble(irt2.getSub(0).getOp());
+        IRTree irtConst = new IRTree();
+        irt.setOp("CONST");
+
+        if(ast.getType() == PLUS) {
+          lhs = lhs + rhs;
+        } else if(ast.getType() == MINUS) {
+          lhs = lhs - rhs;
+        } else if(ast.getType() == MUL) {
+          lhs = lhs * rhs;
+        } else if(ast.getType() == DIV) {
+          lhs = lhs / rhs;
+        }
+        DecimalFormat df = new DecimalFormat("#.0######");
+        irtConst.setOp(df.format(lhs));
+        irt.addSub(irtConst);
+
+    } else {
+      irt.addSub(irt0);
+      irt.addSub(irt1);
+      irt.addSub(irt2);
+    }
   }
 
   private static void error(int tt)
