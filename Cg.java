@@ -121,8 +121,8 @@ public class Cg
 
     } else if(cJumpirt.getSub(0).getOp().equals("LEQ")) {
       String reg = Reg.newReg();
-      emit(o, "SUBR " + reg +"," + lhs + "," + rhs);
-      emit(o, "BGEZR " + reg + "," + cJumpirt.getSub(4));
+      emit(o, "SUBR " + reg +"," + rhs + "," + lhs);
+      emit(o, "BLTZR " + reg + "," + cJumpirt.getSub(4));
       if(irt.getSub(1).getSub(0).getOp() != "LABEL" ||
         irt.getSub(1).getSub(0).getSub(0).getOp() != cJumpirt.getSub(3).getOp()) {
         emit(o, "JMP " + cJumpirt.getSub(3));  

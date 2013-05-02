@@ -3,7 +3,7 @@ all:
 	antlr3 Syn.g
 	javac TokenConv.java
 	java TokenConv Syn.tokens Irt.java 
-	javac *.java
+	antlr3 *.java
 
 test:
 	antlr3 Lex.g
