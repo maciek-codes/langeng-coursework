@@ -33,11 +33,11 @@ options {
 }
 
 variable :
-  IDENTIFIER {$IDENTIFIER.text.length() < 10}?
+  v=IDENTIFIER {$v.text.length() < 10}?
   ;
 catch [FailedPredicateException fpe] {
   String hdr = getErrorHeader(fpe);
-  String msg = "identifier is longer than 9 characters.";
+  String msg = "identifier "+$v.text+" is longer than 9 characters.";
   errorReporter.reportError(hdr, msg, fpe);
 }
 
