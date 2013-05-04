@@ -361,6 +361,8 @@ public class Irt
     int tt = t.getType();
     if (tt == REALNUM) {
       constant(ast, irt1);
+      irt.setOp("CONST");
+      irt.addSub(irt1);
     }
     else if((tt == PLUS || tt == MINUS || tt == DIV || tt == MUL) &&
       ast.getChildCount() > 1) {
@@ -369,14 +371,31 @@ public class Irt
       return;
     } else if(tt == PLUS && ast.getChildCount() == 1) {
       ast1 = (CommonTree)ast.getChild(0);
-      constant(ast1, irt1);
+      arg(ast1, irt1);
+      if(irt1.getOp() != "MEM") {
+        irt.setOp("CONST");
+        irt.addSub(irt1);
+      } else {
+        irt = irt1;
+      }
     } else if(tt == MINUS && ast.getChildCount() == 1) {
       ast1 = (CommonTree)ast.getChild(0);
-      constant(ast1, irt1);
-      irt1.setOp("-" + irt1.getOp());
+      arg(ast1, irt1);
+      if(irt1.getOp() != "MEM") {
+        irt1.setOp("-" + irt1.getOp());
+        irt.setOp("CONST");
+        irt.addSub(new IRTree("-"+irt1.getSub(0).getOp()));
+        //irt.addSub(irt1);
+      } else if(irt1.getOp() == "MEM") {
+        irt.setOp("BINARYOP");
+        irt.addSub(new IRTree("MINUS"));
+        irt.addSub(new IRTree("CONST", new IRTree("0.0")));
+        irt.addSub(irt1);
+      }
+      //irt1.setOp("-" + irt1.getOp());
     }
-    irt.setOp("CONST");
-    irt.addSub(irt1);
+    //irt.setOp("CONST");
+    //irt.addSub(irt1);
   }
 
   // Convert a constant AST to IR tree

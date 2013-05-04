@@ -1,12 +1,6 @@
 begin
-  repeat 
-  	begin 
-  		write(1.0); 
-  		writeln;
-  	end 
-  	until 12.0 <= 0.1;
-  	if 12.0 <= 0.1 begin
-  		write(9.0); 
-  		writeln;
-  	end;
+  b := 10.0;
+  a := 20.0;
+  a := -a;
+  write(a);
 end

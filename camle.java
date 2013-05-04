@@ -36,7 +36,9 @@ class camle {
 
     try {
       CharStream cs = new ANTLRFileStream(inFile);			
+      CustomErrorReporter customErrorReporter = new CustomErrorReporter();
       Lex lexO = new Lex(cs);
+      lexO.setErrorReporter(customErrorReporter);
       if (opt.equals("-lex")) {
         Token T;
         T = lexO.nextToken();
@@ -48,6 +50,7 @@ class camle {
       }
       CommonTokenStream tokens = new CommonTokenStream(lexO);
       Syn synO = new Syn(tokens);
+      synO.setErrorReporter(customErrorReporter);
       Syn.program_return parserResult = synO.program();//start rule
       CommonTree parserTree = (CommonTree) parserResult.getTree();
       if (opt.equals("-syn")) {

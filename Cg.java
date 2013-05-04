@@ -173,15 +173,19 @@ public class Cg
       
       String operation = irt.getSub(0).getOp();
 
-      if(irt.getSub(1).getOp() == "CONST" &&
-        irt.getSub(2).getOp() != "CONST") {
-        
-        IRTree temp = irt.getSub(1);
-        irt.setSub(1, irt.getSub(2));
-        irt.setSub(2, temp);
-      }
+      
 
       if(operation == "PLUS") {
+
+        // Doesn't matter in this case
+        if(irt.getSub(1).getOp() == "CONST" &&
+          irt.getSub(2).getOp() != "CONST") {
+          
+          IRTree temp = irt.getSub(1);
+          irt.setSub(1, irt.getSub(2));
+          irt.setSub(2, temp);
+        }
+
         result = expression(irt.getSub(1), o);
         if(irt.getSub(2).getOp() == "CONST") {
           String imm = irt.getSub(2).getSub(0).getOp();

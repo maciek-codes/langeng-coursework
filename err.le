@@ -1,0 +1,6 @@
+{test error: program to test error handling.}
+begin
+  a := 2;
+  a := a * a;
+  write(a);
+end

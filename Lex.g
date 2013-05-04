@@ -1,6 +1,23 @@
 // COMS22303: Lexical analyser
 lexer grammar Lex;
 
+@members
+{
+  public void displayRecognitionError(String[] tokenNames,
+                                      RecognitionException e) {
+      String hdr = getErrorHeader(e);
+      String msg = getErrorMessage(e, tokenNames);
+      errorReporter.reportError(hdr, msg, e);
+  }
+
+  private IErrorReporter errorReporter = null;
+
+  public void setErrorReporter(IErrorReporter errorReporter) {
+      this.errorReporter = errorReporter;
+  }
+
+}
+
 //---------------------------------------------------------------------------
 // KEYWORDS
 //---------------------------------------------------------------------------
