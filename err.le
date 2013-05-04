@@ -1,6 +1,7 @@
 {test error: program to test error handling.}
 begin
-  a := 2;
+  aaaaaaaaaaaaaa := 2.0;
+  a := 20.0;
   a := a * a;
   write(a);
 end

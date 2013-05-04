@@ -33,8 +33,14 @@ options {
 }
 
 variable :
-  IDENTIFIER
+  IDENTIFIER {$IDENTIFIER.text.length() < 10}?
   ;
+catch [FailedPredicateException fpe] {
+  String hdr = getErrorHeader(fpe);
+  String msg = "identifier is longer than 9 characters.";
+  errorReporter.reportError(hdr, msg, fpe);
+}
+
 
 program :
   compoundstatement
@@ -54,7 +60,7 @@ statement :
   | READ^ OPENPAREN! (variable) CLOSEPAREN!
   | IF^ exp compoundstatement (ELSE! compoundstatement)?
   | REPEAT^ compoundstatement UNTIL! exp
-  | variable ASSIGN^ expression
+  | variable ASSIGN^ expression 
   ;
 
 exp:
