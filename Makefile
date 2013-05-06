@@ -5,6 +5,16 @@ all:
 	java TokenConv Syn.tokens Irt.java 
 	antlr3 *.java
 
+my:
+	antlr3 Lex.g
+	antlr3 Syn.g
+	javac TokenConv.java
+	java TokenConv Syn.tokens Irt.java 
+	javac *.java
+	java camle -cg testsk.le
+	cat testsk.ass
+	./assmule testsk.ass
+
 test:
 	antlr3 Lex.g
 	antlr3 Syn.g
