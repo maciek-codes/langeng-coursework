@@ -71,10 +71,6 @@ class camle {
     	  }
     	  System.exit(0);
       }
-
-      if(customErrorReporter.getErrorCount() > 0) {
-        System.exit(0); 
-      }
       
       CommonTreeNodeStream ast = new CommonTreeNodeStream(parserTree);
       IRTree newIrt = Irt.convert(parserTree);

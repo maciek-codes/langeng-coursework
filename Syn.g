@@ -8,7 +8,7 @@ options {
 }
 
 @members
-{
+{  
   private String cleanString(String s){
     String tmp;
     tmp = s.replaceAll("^'", "");
@@ -43,8 +43,13 @@ catch [FailedPredicateException fpe] {
 
 
 program :
-  compoundstatement
+  compoundstatement {!errorReporter.hasErrors()}? { errorReporter.displayErrors();}
   ;
+catch [FailedPredicateException fpe] {
+  errorReporter.displayErrors();
+  System.exit(0);
+}
+
 
 compoundstatement :
     BEGIN^ ( statement SEMICOLON! )* END!
@@ -57,10 +62,10 @@ relation :
 statement :
     WRITE^ OPENPAREN! ( expression | string ) CLOSEPAREN!
   | WRITELN^
-  | READ^ OPENPAREN! (variable) CLOSEPAREN!
+  | READ^ OPENPAREN! (variable) CLOSEPAREN! { errorReporter.addVariable($variable.text); }
   | IF^ exp compoundstatement (ELSE! compoundstatement)?
   | REPEAT^ compoundstatement UNTIL! exp
-  | variable ASSIGN^ expression 
+  | variable ASSIGN^ expression { errorReporter.addVariable($variable.text); }
   ;
 
 exp:
@@ -68,7 +73,13 @@ exp:
   ;
 
 factor :
-  variable
+  variable 
+  {
+    if(!errorReporter.hasVariable($variable.text)) {
+      String msg = "variable "+$variable.text+" is not initialized before first use.";
+      errorReporter.reportWarning(msg, $variable.start.getLine());
+    } 
+  }
   | constant
   | OPENPAREN! (expression) CLOSEPAREN!
   ;
