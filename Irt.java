@@ -457,8 +457,21 @@ public class Irt
     arg((CommonTree)ast.getChild(1), irt2);
 
     if(irt1.getOp() == "CONST" && irt2.getOp() == "CONST") {
-        double lhs = Double.parseDouble(irt1.getSub(0).getOp());
-        double rhs = Double.parseDouble(irt2.getSub(0).getOp());
+
+        
+
+        while(irt1.getOp() == "CONST") {
+          irt1 = irt1.getSub(0);
+        } 
+
+        double lhs = Double.parseDouble(irt1.getOp());
+
+        while(irt2.getOp() == "CONST") {
+          irt2 = irt2.getSub(0);
+        } 
+
+        double rhs = Double.parseDouble(irt2.getOp());
+        
         IRTree irtConst = new IRTree();
         irt.setOp("CONST");
 
